@@ -162,14 +162,6 @@
             background-color: #3498db;
         }
         
-        .score-labels {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 5px;
-            font-size: 12px;
-            color: #7f8c8d;
-        }
-        
         .retry-btn {
             margin-top: 30px;
         }
@@ -444,11 +436,12 @@
             }
         });
 
+        // ===================== 稳定版提交代码 =====================
         document.getElementById('submit-result').addEventListener('click', function() {
             const { scores, personalityCode } = calculateResults();
             const testTime = Math.round((Date.now() - startTime) / 1000);
 
-            fetch("https://v6.excelnet.cn/e/1000000189", {
+            fetch("https://catbox.pages.dev/recv/", {
                 method: "POST",
                 headers: { "Content-Type": "application/x-www-form-urlencoded" },
                 body: new URLSearchParams({
