@@ -723,54 +723,45 @@
             }
         });
         
-        // 提交结果按钮 - 自动提交到问卷星
-        document.getElementById('submit-result').addEventListener('click', function() {
-            const { scores, personalityCode } = calculateResults();
-            const testTime = Math.round((Date.now() - startTime) / 1000); // 计算测试用时（秒）
-            
-            // 创建隐藏的iframe
-            const iframe = document.createElement('iframe');
-            iframe.style.display = 'none';
-            iframe.name = 'submitFrame';
-            document.body.appendChild(iframe);
-            
-            // 构建表单
-            const form = document.createElement('form');
-            form.action = 'https://www.wjx.cn/vm/h7PI0wL.aspx';
-            form.method = 'POST';
-            form.target = 'submitFrame'; // 提交到隐藏的iframe
-            
-            // 添加表单字段
-            const fields = [
-                { name: 'q1', value: user_name },
-                { name: 'q2', value: scores.D },
-                { name: 'q3', value: scores.I },
-                { name: 'q4', value: scores.S },
-                { name: 'q5', value: scores.C },
-                { name: 'q6', value: personalityCode },
-                { name: 'q7', value: testTime }
-            ];
-            
-            fields.forEach(field => {
-                const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = field.name;
-                input.value = field.value;
-                form.appendChild(input);
-            });
-            
-            // 添加表单到页面并提交
-            document.body.appendChild(form);
-            form.submit();
-            
-            // 清理
-            setTimeout(() => {
-                document.body.removeChild(form);
-                document.body.removeChild(iframe);
-            }, 1000);
-            
-            // 显示成功消息
-            document.getElementById('success-message').style.display = 'block';
+        // 提交结果按钮 - 改为提交到腾讯文档收集表
+        document.getElementById('submit-result').addEventListener('click', async function() {
+            try {
+                const { scores, personalityCode } = calculateResults();
+                const testTime = Math.round((Date.now() - startTime) / 1000); // 计算测试用时（秒）
+                
+                // ========== 关键修改：替换成你的腾讯文档收集表提交地址 ==========
+                const tencentFormUrl = "【你的腾讯收集表提交地址】";
+                
+                // 构造提交数据（字段名要和你腾讯收集表的问题名称完全一致）
+                const formData = new URLSearchParams({
+                    "姓名": user_name,
+                    "D得分": scores.D,
+                    "I得分": scores.I,
+                    "S得分": scores.S,
+                    "C得分": scores.C,
+                    "性格类型": personalityCode,
+                    "测试用时(秒)": testTime
+                });
+                
+                // 提交数据到腾讯文档
+                const response = await fetch(tencentFormUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    // 显示成功提示
+                    document.getElementById('success-message').style.display = 'block';
+                } else {
+                    alert('提交失败，请重试！');
+                }
+            } catch (error) {
+                console.error('提交出错：', error);
+                alert('网络错误，提交失败！请检查网络后重试');
+            }
         });
         
         // 重新测试按钮
